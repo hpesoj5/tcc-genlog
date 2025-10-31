@@ -1,80 +1,61 @@
-from auth import authenticate
 import streamlit as st
+from generators import generators
+from sheet import authenticate
 
-generators = {
-    '22206-1': '12A3B11512',
-    '22206-2': '12A3B11516',
-    '22133-1': '12A3B12319',
-    '22133-2': '12A3B12414',
-    '22146-1': '12A3B12318',
-    '22146-2': '12A3B12315',
-    '22155-1': '12A3B12313',
-    '22155-2': '12A3B12320',
-    '22161-1': '12A3B12324',
-    '22161-2': '12A3B12413',
-    '22207-1': '12A3B11499',
-    '22207-2': '12A3B11500',
-    '22147-1': '12A3B11686',
-    '22147-2': '12A3B11636',
-    '22148-1': '12A3B11702',
-    '22148-2': '12A3B11827',
-    '22164-1': '12A3B11600',
-    '22164-2': '12A3B11658',
-    '22165-1': '12A3B11708',
-    '22165-2': '12A3B11828',
-    '22203-1': '12A3B11501',
-    '22203-2': '12A3B11502',
-    '22139-1': '12A3B11654',
-    '22139-2': '12A3B11653',
-    '22140-1': '12A3B11651',
-    '22140-2': '12A3B11652',
-    '22153-1': '12A3B11642',
-    '22153-2': '12A3B11645',
-    '22208-1': '12A3B11187',
-    '22208-2': '12A3B11191',
-    '22134-1': '12A3B11694',
-    '22134-2': '12A3B11829',
-    '22141-1': '12A3B11695',
-    '22141-2': '12A3B11707',
-    '22162-1': '12A3B11826',
-    '22162-2': '12A3B11830',
-    '22211-1': '12A3B10655',
-    '22211-2': '12A3B10588',
-    '22145-1': '12A3B11706',
-    '22145-2': '12A3B11712',
-    '22144-1': '12A3B12416',
-    '22144-2': '12A3B12415',
-    '22163-1': '12A3B11831',
-    '22163-2': '12A3B11703',
-    '22171-1': '12A3B11099',
-    '22171-2': '12A3B11081',
-    '22172-1': '12A3B11506',
-    '22172-2': '12A3B11504',
-    '22173-1': '12A3B11518',
-    '22173-2': '12A3B11517',
-    '22174-1': '12A3B11525',
-    '22174-2': '12A3B11524',
-    '22175-1': '12A3B11523',
-    '22175-2': '12A3B11522',
-    '22176-1': '12A3B11526',
-    '22176-2': '12A3B11527',
-    '22177-1': '12A3B11529',
-    '22177-2': '12A3B11528',
-    '22178-1': '12A3B11563',
-    '22178-2': '12A3B11531',
-    '22179-1': '12A3B11567',
-    '22179-2': '12A3B11566',
-    '22180-1': '12A3B11569',
-    '22180-2': '12A3B11568',
-    '22181-1': '12A3B11537',
-    '22181-2': '12A3B11536',
-    '22182-1': '12A3B11538',
-    '22182-2': '12A3B11540',
-}
+def page_init():
+    st.set_page_config(
+        page_title="TCC Digital Generator Logbook",
+        page_icon="😎",
+        layout="wide",
+        menu_items={
+            "Report a bug": "mailto:josephtante05@gmail.com",
+        }
+    )
+    col1, col2 = st.columns([2, 3], gap='medium')
+    return (col1, col2)
 
 def main():
-    sheet = authenticate()
-    print("Google service account authentication success!")
+
+    # AUTHENTICATE GOOGLE SERVICE ACCOUNT TO UPDATE GOOGLE SHEET
+    if 'sheet' not in st.session_state:
+        st.session_state['sheet'] = authenticate()
+        print("Google service account authentication success!")
+
+    # INIT PAGE
+    col1, col2 = page_init()
+
+    # GENERATOR SELECTION WIDGET
+    with col1:
+        container = st.container()
+
+        select_all = st.checkbox("Select all")
+
+        if select_all:
+            options = container.multiselect(
+                "Generators",
+                list(generators.keys()),
+                list(generators.keys()),
+                placeholder="Choose generators...",
+                label_visibility='collapsed',
+            )
+        else:
+            options = container.multiselect(
+                "Generators",
+                list(generators.keys()),
+                placeholder="Choose generators...",
+                label_visibility='collapsed',
+            )
+
+    # LOGGING TOOLS
+    with col2:
+        if st.button("Autofill Logsheets", width='stretch'):
+            try:
+                for gen in options:
+                    serial_no = generators[gen]
+                    print(f"{gen} log success!")
+            
+            except Exception as e:
+                print(f"Error updating logs: {e}")
     
 if __name__ == '__main__':
     main()
