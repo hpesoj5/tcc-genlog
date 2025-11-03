@@ -35,10 +35,10 @@ class Sheet:
         return datetime.strptime(date, DATE_WRITE_FORMAT).date() if date != "Date" else None
     
     def get_latest_pol_date(self):
-        events = zip(self.sheet.col_values(DATE_COL), self.sheet.col_values(EVENT_COL))
-        for event_date, event in reversed(events):
-            if event == "POL RECEIVED FROM TCC":
-                return datetime.strptime(event_date, DATE_WRITE_FORMAT).date()
+        entries = zip(self.sheet.col_values(DATE_COL), self.sheet.col_values(EVENT_COL))
+        for entry_date, entry in reversed(entries):
+            if entry == "POL RECEIVED FROM TCC":
+                return datetime.strptime(entry_date, DATE_WRITE_FORMAT).date()
 
         return None
 

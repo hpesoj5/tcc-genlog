@@ -56,6 +56,19 @@ def main():
             
             except Exception as e:
                 print(f"Error updating logs: {e}")
+        
+        st.subheader("Add Manual Entry")
+        
+        # entry_df = 
+        
+        if st.button("Top up POL", width='stretch'):
+            try:
+                for gen in options:
+                    serial_no = generators[gen]
+                    print(f"{gen} log success!")
+            
+            except Exception as e:
+                print(f"Error updating logs: {e}")
     
 if __name__ == '__main__':
     main()
