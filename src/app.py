@@ -55,7 +55,7 @@ def confirm_autofill():
     if yes:
         st.session_state['autofill'] = True
         st.session_state['name'] = name
-        print("YES")
+        # print("YES")
         st.rerun()
     elif no:
         st.session_state['autofill'] = False

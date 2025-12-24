@@ -4,34 +4,41 @@ from google.oauth2.service_account import Credentials
 from pathlib import Path
 from datetime import date, datetime, timedelta
 from generators import generators
+import streamlit as st
 
-def isfloat(str: str):
+def isfloat(str: str) -> bool:
     try:
         float(str)
         return True
     except ValueError:
         return False
 
-def isdate(date: date):
+def isdate(date: date) -> bool:
     try:
         datetime.strptime(date, DATE_READ_FORMAT).date()
         return True
     except ValueError:
         return False
 
-def authenticate():
-    root_dir = Path(__file__).resolve().parent
-    cred_path = root_dir.parent / 'credentials/service-account-credentials.json'
+def authenticate() -> gspread.spreadsheet.Spreadsheet | None:
+    # root_dir = Path(__file__).resolve().parent
+    # cred_path = root_dir.parent / 'credentials/service-account-credentials.json'
 
     # Set up Google Sheets credentials
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-    creds = Credentials.from_service_account_file(cred_path, scopes=SCOPES)
+    # creds = Credentials.from_service_account_file(cred_path, scopes=SCOPES)
+    try:
+        creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=SCOPES)
 
-    client = gspread.authorize(creds)
-    sheet = client.open('tcc-genlog')
-    print("Google service account authentication success!")
+        client = gspread.authorize(creds)
+        sheet = client.open('tcc-genlog')
+        print("Google service account authentication success!")
 
-    return sheet
+        return sheet
+
+    except Exception as e:
+        print(f"Error with Google service account authentication: {e}")
+        return None
 
 DATE_READ_FORMAT = '%d%m%y'
 DATE_WRITE_FORMAT = '%d%m%y'
@@ -52,7 +59,7 @@ class Sheet:
         self.sheet = sheet.worksheet(gen)
         self.data = {} # THIS IS TO STORE DATE AND READING VALUES, ENSURING THAT EACH COLUMN IS CALLED AT MOST ONCE EVERY AUTOFILL QUERY
 
-    def get_latest_date(self):
+    def get_latest_date(self) -> date | None:
         """
         Returns the latest entry date, together with the row number. Returns None if no date exists.
 
@@ -65,7 +72,7 @@ class Sheet:
 
         return (datetime.strptime(dates[-1], DATE_READ_FORMAT).date(), rows) if len(dates) > 0 else None
 
-    def get_latest_reading(self):
+    def get_latest_reading(self) -> float | None:
         """
         Returns the latest entry runtime reading. Returns None if no reading exists.
 
@@ -77,7 +84,7 @@ class Sheet:
 
         return readings[-1] if len(readings) > 0 else None
 
-    def get_latest_pol_date_reading(self):
+    def get_latest_pol_date_reading(self) -> date | None:
         """
         Returns the last POL top up date, as well as the reading after the top up. Returns None is no top up exists.
 
@@ -112,7 +119,7 @@ class Sheet:
         if latest_date == None or latest_reading == None:
             print("Error: Need at least one runtime entry before autofill")
             return False
-        print(latest_date, latest_reading, latest_pol_date_reading)
+        # print(latest_date, latest_reading, latest_pol_date_reading)
         # SET PARAMETERS
         increment = 0.5
 
@@ -160,15 +167,5 @@ class Sheet:
         if len(cell_list) > 0:
             self.sheet.update_cells(cell_list) # 1 API CALL
 
-        print(f"Autofilled sheet {gen}!")
+        print(f"Autofilled sheet {gen}")
         return True
-
-    # def write(self, event_date: date)                  TO WRITE MANUAL ENTRIES E.G. ROT 3
-
-    # def top_up_pol(self, event_date: date):
-
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
