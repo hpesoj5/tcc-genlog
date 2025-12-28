@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import date, datetime, timedelta
 from generators import generators
 import streamlit as st
+import pandas as pd
 
 def isfloat(str: str) -> bool:
     try:
@@ -21,12 +22,7 @@ def isdate(date: date) -> bool:
         return False
 
 def authenticate() -> gspread.spreadsheet.Spreadsheet | None:
-    # root_dir = Path(__file__).resolve().parent
-    # cred_path = root_dir.parent / 'credentials/service-account-credentials.json'
-
-    # Set up Google Sheets credentials
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-    # creds = Credentials.from_service_account_file(cred_path, scopes=SCOPES)
     try:
         creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=SCOPES)
 
@@ -50,6 +46,15 @@ READING_COL = 8
 FUEL_COL = 10
 NAME_COL = 13
 NUM_COLS = 13
+
+def format_date(d: str):
+    if (not d.isdigit()):
+        return d
+    else:
+        if (len(d) < 6):
+            d = '0' + d
+        d_date = datetime.strptime(d, DATE_READ_FORMAT)
+        return datetime.strftime(d_date, DATE_WRITE_FORMAT)
 
 class Sheet:
     """
@@ -169,3 +174,18 @@ class Sheet:
 
         print(f"Autofilled sheet {gen}")
         return True
+
+    def get_sheet_as_df(self) -> pd.DataFrame:
+        df = pd.DataFrame(self.sheet.get_all_records())
+        df = df.rename(columns={
+            "To (State address. Each journey to be written on a separate line)": "Location",
+            "Requisitioner's Designation and Purpose": "Purpose",
+            "Time": "Started",
+            "": "Arrived",
+            "Travelling Time in minutes": "Travelling Time/min",
+            "Meter reading at journey's end. If not working write \"N.W.\"": "Meter reading",
+            "Driver's No. if any and Signature": "Driver's No. & Signature",
+            "Name and initials of person accompanying vehicle / authorising the journey": "Name",
+        }).drop([0])
+        df['Date'] = df['Date'].astype('string').apply(format_date)
+        return df
