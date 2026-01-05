@@ -1,14 +1,20 @@
 # TCC Generator Digital Logbook
 A [Streamlit app](https://hpesoj-tcc-genlog.streamlit.app/) to faciliate the logging of generator meter readings in TCC.
 
-## Features
+
+
+# Features
 - Integration with Google Sheets
 - Automatic logging to specified date
 - In-app generator log viewer
 
-## Usage
 
-### Autofill
+
+# Usage
+
+
+
+## Autofill
 
 ![gsheet](src/images/gsheet.png)
 
@@ -25,7 +31,8 @@ Select the corresponding generators in the `Choose generators...` dropdown and t
 When prompted, a name can optionally be entered.
 
 
-### Viewing Logs
+
+## Viewing Logs
 
 The viewing of generator logs can be done in the [sheet](https://docs.google.com/spreadsheets/d/14vNYY24YcFoJ7-aKJCqSyJboYIX7ZlmY4S_0SS2gFTY/edit?usp=sharing), or directly on the app.
 
