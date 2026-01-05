@@ -75,7 +75,10 @@ class Sheet:
         rows = len(dates)
         dates = [date for date in dates if isdate(date)]
 
-        return (datetime.strptime(dates[-1], DATE_READ_FORMAT).date(), rows) if len(dates) > 0 else None
+        if len(dates) == 0:
+            return None
+        else:
+            return (datetime.strptime(dates[-1], DATE_READ_FORMAT).date(), rows)
 
     def get_latest_reading(self) -> float | None:
         """
@@ -87,7 +90,10 @@ class Sheet:
         self.data['readings'] = readings
         readings = [float(reading) for reading in readings if isfloat(reading)]
 
-        return readings[-1] if len(readings) > 0 else None
+        if len(readings) == 0:
+            return None
+        else:
+            return readings[-1]
 
     def get_latest_pol_date_reading(self) -> date | None:
         """
@@ -97,10 +103,12 @@ class Sheet:
         """
         if "dates" not in self.data:
             self.get_latest_date()
-
         if "readings" not in self.data:
             self.get_latest_reading()
 
+        if self.data['dates'] == None or self.data['readings'] == None:
+            return None
+        
         entries = tuple(zip(self.data['dates'], self.sheet.col_values(ENTRY_COL), self.data['readings']))
         for entry_date, entry, reading in reversed(entries):
             if entry == "TOP UP POL":
@@ -117,15 +125,13 @@ class Sheet:
         self.data.clear()
         # GET DATA FROM SHEET
         latest_date = self.get_latest_date() # 1 API CALL
-        latest_date, row = latest_date
         latest_reading = self.get_latest_reading() # 1 API CALL
         latest_pol_date_reading = self.get_latest_pol_date_reading() # 1 API CALL
 
         if latest_date == None or latest_reading == None:
-            print("Error: Need at least one runtime entry before autofill")
-            return False
-        # print(latest_date, latest_reading, latest_pol_date_reading)
+            raise ValueError("Sheet needs at least one runtime entry before autofill")
         # SET PARAMETERS
+        latest_date, row = latest_date
         increment = 0.5
 
         # SET RUNTIME SINCE LAST POL TOP UP AND LIMIT BETWEEN POL TOP UPS

@@ -142,7 +142,8 @@ def main():
         st.session_state['sheet'] = authenticate()
 
     # INIT PAGE
-    st.title("TCC Generator Logbook Tool")
+    st.title("TCC Generator Logbook Tool", anchor=False)
+    st.subheader("[How to Use](https://github.com/hpesoj5/tcc-genlog?tab=readme-ov-file#usage)", anchor=False)
     logger, viewer = page_init()
 
     # GENERATOR SELECTION WIDGET
