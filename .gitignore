@@ -6,3 +6,8 @@ genlogs
 credentials
 .streamlit/secrets.toml
 .python-version
+setup.cfg
+
+# old files
+src/gen.py
+src/genlogger.py
