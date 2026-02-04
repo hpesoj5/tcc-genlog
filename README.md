@@ -26,6 +26,8 @@ Add a single quote (') at the start of every date. (e.g. '260324)
 
 Select the corresponding generators in the `Choose generators...` dropdown and the end date of the autofill function.
 
+Set the target generator reading (optional) to reach and the date you want to autofill logs to. If the target generator reading is not set, every EAS entry will have the reading increase by 0.5.
+
 ![dialog](src/images/dialog.png)
 
 When prompted, a name can optionally be entered.
