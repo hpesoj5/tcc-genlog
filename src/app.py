@@ -17,7 +17,7 @@ def load_sheet(sheet_container: st.container, gen: str):
 
 def page_init():
 
-    st.title("TCC Generator Logbook Tool", anchor=False)
+    st.title("TCC Generator Logbook Tool 📝", anchor=False)
     st.subheader("[How to Use](https://github.com/hpesoj5/tcc-genlog?tab=readme-ov-file#usage)", anchor=False)
     st.set_page_config(
         page_title="TCC Digital Generator Logbook",
@@ -61,7 +61,7 @@ def display_gen_selection_panel(logger):
         end_date = st.date_input(label="Date to autofill logs until", value="today", format="DD/MM/YYYY")
 
         if st.button("Autofill Logsheets", width='stretch'):
-            confirm_autofill()
+            confirm_autofill(len(options))
 
         if st.session_state['autofill']:
             autofill(options, st.session_state['name'], end_date, end_val)

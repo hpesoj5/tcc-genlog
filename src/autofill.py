@@ -34,12 +34,16 @@ def autofill(gens, name: str="", end_date: date=date.today(), end_val: int | Non
     time.sleep(1)   # to leave the dialog on display for a second
     st.rerun()      # reload
 
-@st.dialog("Do you want to update the selected generators?")
-def confirm_autofill():
+@st.dialog("Update the selected generators?")
+def confirm_autofill(num_options):
 
-    name = st.text_input(label="Name", label_visibility='hidden', width='stretch', placeholder='Enter name of authorising person')
-    no = st.button("No", width='stretch')
-    yes = st.button("Yes", width='stretch', type='primary')
+    st.write(f"{num_options} generators selected")
+    name = st.text_input(label="Name", label_visibility='collapsed', width='stretch', placeholder='Enter name of authorising person (optional)')
+    col1, col2 = st.columns(2)
+    with col1:
+        no = st.button("No", width='stretch')
+    with col2:
+        yes = st.button("Yes", width='stretch', type='primary')
 
     if yes:
         st.session_state['autofill'] = True

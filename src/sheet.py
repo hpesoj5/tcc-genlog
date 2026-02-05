@@ -2,7 +2,7 @@ import gspread
 from gspread.cell import Cell
 from google.oauth2.service_account import Credentials
 from datetime import date, datetime, timedelta
-from utility import isfloat, isdate, format_date, DATE_READ_FORMAT, DATE_WRITE_FORMAT, DATE_COL, ADDRESS_COL, ENTRY_COL, RUNTIME_COL, READING_COL, FUEL_COL, NAME_COL
+from utility import isfloat, isdate, format_date, EAS_ENTRY_STD_DEV, DATE_READ_FORMAT, DATE_WRITE_FORMAT, DATE_COL, ADDRESS_COL, ENTRY_COL, RUNTIME_COL, READING_COL, FUEL_COL, NAME_COL
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -120,9 +120,7 @@ class Sheet:
             diff = end_val - latest_reading
             weekly_average = diff / num_weeks
             
-            std_dev = 0.02 # CAN BE CHANGED
-
-            deviations = np.random.normal(0, std_dev, num_weeks)
+            deviations = np.random.normal(0, EAS_ENTRY_STD_DEV, num_weeks)
 
             weekly_increments = weekly_average + deviations
 

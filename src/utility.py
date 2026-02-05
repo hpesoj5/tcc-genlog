@@ -11,6 +11,8 @@ FUEL_COL = 10
 NAME_COL = 13
 NUM_COLS = 13
 
+EAS_ENTRY_STD_DEV = 0.02
+
 def isfloat(str: str) -> bool:
     try:
         float(str)
